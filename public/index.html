@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Serveur 1</title>
+	<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+	<nav>
+	    <h1><a href="/">Home</a></h1>
+  	</nav>
+	<form action="/signup">
+	  	<h2>Requests</h2>
+
+	  	<label for="username">Username</label>
+	  	<input type="text" name="username" />
+
+	 	<label for="email">Email</label>
+	  	<input type="text" name="email" />
+
+	  	<label for="password">Password</label>
+	  	<input type="password" name="password" />
+
+	  	<label for="method">Choose the request method:</label>
+
+	  		<div class="radioContainer">
+				<input class="radio" id="get" type="radio" name="method" value="GET" required />
+		  		<label class="radio" for="get">GET (obtenir un utlisateur)</label>
+	  		</div>
+	  	
+	  		<div class="radioContainer">
+				<input class="radio" id="post" type="radio" name="method" value="POST" required />
+				<label class="radio" for="post">POST (creer un nouveau utilisateur)</label>
+	  		</div>
+
+	  		<div class="radioContainer">
+				<input class="radio" id="put"type="radio" name="method" value="PUT" required />
+				<label class="radio" for="put">PUT (metre a jour un utilisateur)</label>
+	  		</div>
+
+	  		<div class="radioContainer">
+				<input class="radio" id="delete" type="radio" name="method" value="DELETE" required />
+				<label class="radio" for="delete">DELETE (supprimer un utilisateur)</label>
+	  		</div>
+
+	  	<button>Envoyer</button>
+	</form>
+	
+	<script>
+		const form = document.querySelector('form');
+
+		form.addEventListener('submit', async (e) => {
+	    e.preventDefault();
+
+	    // get values
+	    const username = form.username.value;
+	    const email = form.email.value;
+	    const password = form.password.value;
+
+	    // detect the selected method
+	    let method;
+	    const buttons = document.querySelectorAll('input.radio');
+	    console.log(buttons);
+	    buttons.forEach(btn => {
+	    	if(btn.checked) method=btn.value
+	    })
+
+	    try {
+	    	let res;
+	    	if(method === 'GET'){
+
+	    		res = await fetch('/login', { 
+        			method: 'POST', 
+			        body: JSON.stringify({ username, email, password }),
+			        headers: {'Content-Type': 'application/json'}
+      			});
+	    	} 
+	    	else {
+
+		    	res = await fetch('/signup', { 
+		        	method: method, 
+			        body: JSON.stringify({ username, email, password }),
+			        headers: {'Content-Type': 'application/json'}
+		      	});
+	    	}
+
+	      	const data = await res.json();
+	      	console.log(data);
+
+	      	if (data.id) {
+	      		
+	      		alert(`Message: ${data.message}\n\nid: ${data.id}\nusername: ${data.username}\nemail: ${data.email}\npassword: ${data.password}`);
+	      	}
+	      	else {
+	      		alert(message: data.message);
+	      		console.log(data);
+	      	}
+
+	    }
+	    catch (err) {
+	      console.log(err);
+	    }
+
+	  });
+	</script>
+</body>
+</html>
